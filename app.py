@@ -9,7 +9,7 @@ from PIL import Image
 app = FastAPI(title="API Detección de Tomates")
 
 # Cargar modelo entrenado (una vez)
-model = YOLO("model/best.pt") # tu modelo YOLOlive o YOLOv8
+model = YOLO("best.pt") # tu modelo YOLOlive o YOLOv8
 
 @app.post("/detectar")
 async def detectar_tomates(image: UploadFile = File(...)):
@@ -38,3 +38,4 @@ async def detectar_tomates(image: UploadFile = File(...)):
         "promedio_confianza": conf_prom,
         "objetos": tomates
     })
+
