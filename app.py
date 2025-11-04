@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 import io
 from PIL import Image
+from fastapi.responses import HTMLResponse
 
 app = FastAPI(title="API Detección de Tomates")
 
@@ -33,9 +34,24 @@ async def detectar_tomates(image: UploadFile = File(...)):
     tomates = [d for d in detecciones if d["class"].lower() == "tomate"]
     conf_prom = np.mean([d["conf"] for d in tomates]) if tomates else 0
 
+
+@app.get("/", response_class=HTMLResponse)
+async def root():
+    return """
+    <html>
+        <body>
+            <h2>Subir imagen para detección de tomates 🍅</h2>
+            <form action="/detectar" enctype="multipart/form-data" method="post">
+                <input name="image" type="file" accept="image/*">
+                <input type="submit" value="Detectar">
+            </form>
+        </body>
+    </html>
+    """
     return JSONResponse({
         "detecciones": len(tomates),
         "promedio_confianza": conf_prom,
         "objetos": tomates
     })
+
 
